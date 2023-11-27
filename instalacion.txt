@@ -1,0 +1,6 @@
+en anaconda crear un entorno y instalar:
+numpy 1.24
+numba
+librosa
+sklearn
+transformers
