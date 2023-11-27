@@ -5,11 +5,10 @@
 |:-----------------------------------:|:---------:|
 |  Fernando Adriano Choqque Mejia,    |  Backend  |
 |    Juan Jose Leandro Blas           |  Backend  |
-|    Carlos Alonso Flores Panduro     |  Backend |
 
 
 ## INTRODUCCION
-En este proyecto evaluaruaremos diferentes índices multidimensionales para identificar el mejor indice para la recuperación de archivos de audio. Se explorarán tres enfoques principales: índices secuenciales, índices R-tree y técnicas de Local Sensitive Hashing (LSH).
+En este proyecto evaluaremos diferentes índices multidimensionales para identificar el mejor indice para la recuperación de archivos de audio. Se explorarán tres enfoques principales: índices secuenciales, índices R-tree y técnicas de Local Sensitive Hashing (LSH).
 
 ## DATASET
 Utilizaremos los archivos de audio ofrecidos por Free Music Archive(FMA).
@@ -24,9 +23,14 @@ CLAP (Contrastive Language-Audio Pretraining) is a model that learns acoustic co
 
 El modulo de audio utiliza un audio encoder.
 
-![autoencoder](https://miro.medium.com/v2/resize:fit:1400/1*44eDEuZBEsmG_TCAKRI3Kw@2x.png)
+![audio autoencoder](https://pub.mdpi-res.com/sensors/sensors-20-03741/article_deploy/html/images/sensors-20-03741-g001.png?1594195873)
 
-utilizamos la implementacion de CLAP ofrecida por Hugging Face, especificamente la parte de extraccion: get_audio_features. obtenemos un vector de 512 dimensiones. 
+Si bien el objetivo del modelo no es la extraccion de caracteristicas, en su entrenamiento aprendio a representar de manera eficiente a un audio. Por lo que utilizamos ese modulo para obtener los vectores caracteristicos.
+
+[CLAP github](https://github.com/microsoft/CLAP)
+
+
+utilizamos la implementacion de CLAP ofrecida por Hugging Face, especificamente la parte de extraccion: get_audio_features del cual obtendremos un vector de 512 dimensiones. 
 
 ```python
 def extraction_feature(audio_path, model, feature_extractor):
@@ -54,17 +58,30 @@ se implementaron 2 algoritmos:
 
 - knnHeap: Se utiliza un heap de tamaño k para obtener los k audios mas cercanos a my query utilizando un maxHeap
 
+
+
 ### RTREE
+
 ![arquitectura RTREE](https://cglab.ca/~cdillaba/comp5409_project/images/rtree.png)
 
 Un R-tree es una estructura de datos especializada utilizada en el ámbito de las bases de datos espaciales y la indexación espacial. 
 La función principal de un R-tree es organizar objetos espaciales en una jerarquía de nodos, donde cada nodo representa un conjunto de objetos y su espacio circunscrito. Esto permite una búsqueda eficiente de objetos cercanos en términos de coordenadas espaciales
 
-- knnSearch: ejecuta la funcion nearest de la libreria rtree para obtener los k audios mas cercanos a mi query.
+```python
+def knnSearch(self, k):
+        results = []   
+        # transformandolo a bounding box falsas
+        coord_query = self.query_features + self.query_features
 
-segun 
+        nearest = list(self.idx.nearest(coordinates=coord_query, num_results=k))
 
+        for ids in nearest:
+            path,feature = self.features[ids]
+            dist = np.linalg.norm(feature - self.query_features)
+            results.append((dist, path))
 
+        return results, query_time
+```
 
 ### LSH
 ![arquitectura LSH](https://cdn.sanity.io/images/vr8gru94/production/862f88182a796eb16942c47d93ee03ba4cdaee4d-1920x1080.png)
