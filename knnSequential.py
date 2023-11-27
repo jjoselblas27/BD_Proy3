@@ -1,6 +1,7 @@
 # implementacion del kkn para range search y knn usando heap.
 import numpy as np
 from maxHeap import MaxHeap
+import time
 
 class KNNSequential:
     def __init__(self, features, query_features):
@@ -9,6 +10,8 @@ class KNNSequential:
         self.query_features = query_features
 
     def range_search(self, radius):
+        start_time = time.time()
+
         results = []
         # Calcular la distancia euclidiana entre el query y cada una de las características
         for path, feature in self.features:
@@ -18,10 +21,15 @@ class KNNSequential:
                 results.append((dist, path))
 
         sorted_results = sorted(results, key=lambda x: x[0])
-        return sorted_results
+
+        end_time = time.time()
+        query_time = end_time - start_time
+        return sorted_results, query_time
 
     
     def heap_search_maxHeap(self, k):
+        start_time = time.time()
+
         heap = MaxHeap()
 
         for path, feature in self.features:
@@ -35,8 +43,10 @@ class KNNSequential:
                     heap.push([dist, path])
         
         heapList = heap.heap
-        for i in len(k):
-            heapList[i][0] = -heapList[i][0]
-        return heapList
+        
+        end_time = time.time()
+        query_time = end_time - start_time
+
+        return heapList, query_time
 
 
