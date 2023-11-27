@@ -43,7 +43,7 @@ def prueba_lsh(features, query_features):
     results, query_time = knn.knn_query(k)
 
     print("Tiempo de query: ", query_time)
-    print("Resultados de LST: ")
+    print("Resultados de LSH: ")
     print(len(results))
     for dist, path in results:
         print("Distancia: ", dist, " Path: ", path)
@@ -79,10 +79,12 @@ def main():
 
 
     features_red = features
+    
     print(8000)
+    prueba_range(features_red, query_features)
     prueba_heap(features_red, query_features)
     prueba_lsh(features_red, query_features)
-    prueba_rtree(features_red, query_features)
+    #prueba_rtree(features_red, query_features)
     """
     prueba = [4, 8, 16, 32, 64]
     for i in prueba:
